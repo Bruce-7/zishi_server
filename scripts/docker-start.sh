@@ -84,6 +84,7 @@ mkdir -p logs media
 echo "复制环境配置文件..."
 cp "$DOCKER_CONFIG_DIR/$ENV_FILE" "$DOCKER_CONFIG_DIR/.env"
 echo "✅ 已复制 $ENV_FILE 到 .env"
+echo ""
 
 # 停止并删除旧容器
 echo "停止旧容器..."
