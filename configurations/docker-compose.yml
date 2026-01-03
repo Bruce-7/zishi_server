@@ -3,8 +3,8 @@ services:
     image: mysql:8.0
     container_name: zishi_mysql
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-!HEdong911012.}
-      MYSQL_DATABASE: ${DB_NAME:-zishi_server_dev}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
       MYSQL_CHARACTER_SET_SERVER: utf8mb4
       MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
     ports:
