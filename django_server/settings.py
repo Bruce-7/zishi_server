@@ -16,6 +16,10 @@ from pathlib import Path
 
 import environ
 
+# PyMySQL 配置
+import pymysql
+pymysql.install_as_MySQLdb()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -100,20 +104,21 @@ WSGI_APPLICATION = 'django_server.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': env('DB_ENGINE'),
+        'ENGINE': 'django.db.backends.mysql',  # 直接使用字符串，而不是从环境变量读取
         'NAME': env('DB_NAME'),
         'USER': env('DB_USER'),
         'PASSWORD': env('DB_PASSWORD'),
         'HOST': env('DB_HOST'),
-        'PORT': env('DB_PORT'),
+        'PORT': env('DB_PORT', default='3306'),
         'OPTIONS': {
             'charset': 'utf8mb4',
             'collation': 'utf8mb4_unicode_ci',
-            'init_command': (
-                "SET sql_mode='STRICT_TRANS_TABLES';"
-                "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;"
-            ),
-            # 解决 MySQL 8.0+ 认证插件兼容性问题
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES', NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
+            'connect_timeout': 10,  # 连接超时时间（秒）
+            'read_timeout': 30,     # 读取超时时间（秒）
+            'write_timeout': 30,    # 写入超时时间（秒）
+            'use_unicode': True,    # 确保使用Unicode
+            # MySQL 8.0+ 认证插件配置
             'auth_plugin': 'caching_sha2_password',
         },
         'CONN_MAX_AGE': env.int('DB_CONN_MAX_AGE', default=600),

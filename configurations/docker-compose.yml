@@ -7,17 +7,18 @@ services:
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_CHARACTER_SET_SERVER: utf8mb4
       MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
+      MYSQL_DEFAULT_AUTHENTICATION_PLUGIN: mysql_native_password
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-    command: --default-authentication-plugin=mysql_native_password
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: 
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+      - "--default-authentication-plugin=mysql_native_password"
+      - "--max_connections=1000"
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   web:
     build:
@@ -33,14 +34,32 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=django_server.settings
       - PYTHONUNBUFFERED=1
+      - DB_ENGINE=django.db.backends.mysql
+      - DB_NAME=${DB_NAME}
+      - DB_USER=root
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_CONN_MAX_AGE=600
     depends_on:
       mysql:
         condition: service_healthy
     restart: unless-stopped
     command: >
-      sh -c "python manage.py migrate &&
+      sh -c "python manage.py wait_for_db &&
+             python manage.py migrate &&
              python manage.py collectstatic --noinput &&
-             gunicorn --bind 0.0.0.0:8000 --workers 4 --timeout 120 --access-logfile - --error-logfile - django_server.wsgi:application"
+             gunicorn --bind 0.0.0.0:8000 
+                     --workers 4 
+                     --timeout 120 
+                     --worker-class=gthread 
+                     --threads 4 
+                     --worker-connections=1000 
+                     --max-requests=1000 
+                     --max-requests-jitter=50 
+                     --access-logfile - 
+                     --error-logfile - 
+                     django_server.wsgi:application"
 
 volumes:
   mysql_data:

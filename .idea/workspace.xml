@@ -3,6 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="78f3bc9e-1e15-48a9-a0ac-51cd67925b5e" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/configurations/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/configurations/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/configurations/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/configurations/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/configurations/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/configurations/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/django_server/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/django_server/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,26 +36,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Django 服务器.zhuankuai_server.executor": "Debug",
-    "Django 服务器.zishi_server.executor": "Debug",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.pycharm.django.structure.promotion.once.per.project": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "SHELLCHECK.PATH": "我会在意",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/hedong/Work/DRY/zishi_server/configurations",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Django 服务器.zhuankuai_server.executor&quot;: &quot;Debug&quot;,
+    &quot;Django 服务器.zishi_server.executor&quot;: &quot;Debug&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.pycharm.django.structure.promotion.once.per.project&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;SHELLCHECK.PATH&quot;: &quot;我会在意&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/hedong/Work/DRY/zishi_server/configurations&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
       <console-settings module-name="zhuankuai_server" is-module-sdk="true">
@@ -128,6 +132,8 @@
       <workItem from="1767444933947" duration="181000" />
       <workItem from="1767445122642" duration="2066000" />
       <workItem from="1767447440904" duration="10202000" />
+      <workItem from="1767458125599" duration="794000" />
+      <workItem from="1767492263913" duration="1988000" />
     </task>
     <task id="LOCAL-00001" summary="统一接口path格式">
       <option name="closed" value="true" />
