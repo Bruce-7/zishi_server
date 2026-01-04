@@ -121,8 +121,6 @@ DATABASES = {
             'read_timeout': 30,     # 读取超时时间（秒）
             'write_timeout': 30,    # 写入超时时间（秒）
             'use_unicode': True,    # 确保使用Unicode
-            # MySQL 8.0+ 认证插件配置
-            'auth_plugin': 'caching_sha2_password',
         },
         'CONN_MAX_AGE': env.int('DB_CONN_MAX_AGE', default=600),
     }
