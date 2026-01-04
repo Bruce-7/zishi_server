@@ -48,30 +48,6 @@ run_compose() {
 
 choose_env
 
-# 检查 SSL 证书（仅 development 和 production 环境）
-if [[ "${ENV_NAME}" != "local" ]]; then
-  SSL_CERT_DIR="${CONFIG_DIR}/ssl/${ENV_NAME}"
-  if [[ ! -f "${SSL_CERT_DIR}/fullchain.pem" ]] || [[ ! -f "${SSL_CERT_DIR}/privkey.pem" ]]; then
-    echo "⚠️  警告：未检测到 ${ENV_NAME} 环境的 SSL 证书文件"
-    echo "证书路径: ${SSL_CERT_DIR}/"
-    echo ""
-    if [[ "${ENV_NAME}" == "production" ]]; then
-      echo "请按以下步骤部署证书："
-      echo "  1. 从腾讯云下载 api.dry-zishi.com 的 SSL 证书（Nginx 格式）"
-      echo "  2. 将证书文件上传到: ${SSL_CERT_DIR}/fullchain.pem"
-      echo "  3. 将私钥文件上传到: ${SSL_CERT_DIR}/privkey.pem"
-      echo ""
-      read -r -p "是否继续启动服务？(y/n): " continue_start
-      if [[ "${continue_start}" != "y" ]]; then
-        echo "❌ 已取消启动"
-        exit 0
-      fi
-    fi
-  else
-    echo "✅ 已检测到 ${ENV_NAME} 环境的 SSL 证书"
-  fi
-fi
-
 echo "🚀 构建并启动 Docker 服务..."
 run_compose up -d --build --remove-orphans
 
