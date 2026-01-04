@@ -57,11 +57,11 @@ if [[ "${ENV_NAME}" != "local" ]]; then
     echo ""
     echo "请按以下步骤部署证书："
     if [[ "${ENV_NAME}" == "development" ]]; then
-      echo "  1. 从腾讯云下载 api.dry-zishi.com 的 SSL 证书（Nginx 格式）"
+      echo "  1. 从腾讯云下载 43.140.248.182 的 SSL 证书（Nginx 格式）"
       echo "  2. 将证书文件上传到: ${SSL_CERT_DIR}/fullchain.pem"
       echo "  3. 将私钥文件上传到: ${SSL_CERT_DIR}/privkey.pem"
     else
-      echo "  1. 从腾讯云下载 dry-zishi.com 的 SSL 证书（Nginx 格式）"
+      echo "  1. 从腾讯云下载 api.dry-zishi.com 的 SSL 证书（Nginx 格式）"
       echo "  2. 将证书文件上传到: ${SSL_CERT_DIR}/fullchain.pem"
       echo "  3. 将私钥文件上传到: ${SSL_CERT_DIR}/privkey.pem"
     fi
@@ -98,11 +98,16 @@ if echo "${service_status}" | grep -q "Up"; then
     echo "访问地址: http://localhost:8000"
     echo "API 文档: http://localhost:8000/docs/"
     echo "管理后台: http://localhost:8000/zishi_admin/"
+  elif [[ "${ENV_NAME}" == "development" ]]; then
+    echo "HTTP 访问: http://43.140.248.182 （自动重定向到 HTTPS）"
+    echo "HTTPS 访问: https://43.140.248.182"
+    echo "API 文档: https://43.140.248.182/docs/"
+    echo "管理后台: https://43.140.248.182/zishi_admin/"
   else
-    echo "HTTP 访问: http://localhost （自动重定向到 HTTPS）"
-    echo "HTTPS 访问: https://your-domain.com"
-    echo "API 文档: https://your-domain.com/docs/"
-    echo "管理后台: https://your-domain.com/zishi_admin/"
+    echo "HTTP 访问: http://api.dry-zishi.com （自动重定向到 HTTPS）"
+    echo "HTTPS 访问: https://api.dry-zishi.com"
+    echo "API 文档: https://api.dry-zishi.com/docs/"
+    echo "管理后台: https://api.dry-zishi.com/zishi_admin/"
   fi
   echo "MySQL 端口: localhost:3306"
   echo ""
