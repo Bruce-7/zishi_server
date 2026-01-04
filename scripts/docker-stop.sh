@@ -15,7 +15,10 @@ fi
 
 export COMPOSE_PROJECT_NAME="zishi_server"
 
+# 设置环境变量避免警告
+cd "${CONFIG_DIR}"
+
 echo "🛑 正在停止 Docker 服务..."
-docker compose -f "${COMPOSE_FILE}" down "$@"
+docker compose -p zishi_server down --remove-orphans "$@"
 
 echo "✅ Docker 服务已停止。"
