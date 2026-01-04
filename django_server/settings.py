@@ -49,6 +49,12 @@ DJANGO_ENV = env.str('DJANGO_ENV', default='local')
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 
+# HTTPS 反向代理支持
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# CSRF 信任的来源（用于 HTTPS 环境下的表单提交）
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
+
 # Application definition
 
 INSTALLED_APPS = [
