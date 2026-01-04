@@ -134,7 +134,7 @@ class AppVersionAdmin(admin.ModelAdmin):
     def action_buttons(self, obj):
         """操作按钮"""
         return mark_safe(
-            f'<a class="button" href="/admin/setting/appversion/{obj.id}/change/" '
+            f'<a class="button" href="/zishi_admin/setting/appversion/{obj.id}/change/" '
             f'style="padding: 5px 10px; background-color: #417690; color: white; '
             f'text-decoration: none; border-radius: 3px; font-size: 12px;">编辑</a>'
         )
