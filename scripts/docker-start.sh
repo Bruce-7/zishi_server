@@ -93,9 +93,9 @@ if echo "${service_status}" | grep -q "Up"; then
     echo "API 文档: http://localhost:8000/docs/"
     echo "管理后台: http://localhost:8000/zishi_admin/"
   elif [[ "${ENV_NAME}" == "development" ]]; then
-    echo "HTTP 访问: http://43.140.248.182"
-    echo "API 文档: http://43.140.248.182/docs/"
-    echo "管理后台: http://43.140.248.182/zishi_admin/"
+    echo "HTTP 访问: http://43.140.248.182:8080"
+    echo "API 文档: http://43.140.248.182:8080/docs/"
+    echo "管理后台: http://43.140.248.182:8080/zishi_admin/"
   else
     echo "HTTP 访问: http://api.dry-zishi.com （自动重定向到 HTTPS）"
     echo "HTTPS 访问: https://api.dry-zishi.com"
