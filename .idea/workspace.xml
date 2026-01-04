@@ -3,7 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="78f3bc9e-1e15-48a9-a0ac-51cd67925b5e" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/configurations/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/configurations/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/setting/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/setting/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/setting/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/setting/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/user/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/user/admin.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

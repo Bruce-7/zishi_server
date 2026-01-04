@@ -81,6 +81,16 @@ class VersionCheckRequestSerializer(serializers.Serializer):
         help_text='当前应用版本名称（可选）'
     )
 
+    _allowed_fields = {'platform', 'version_code', 'version_name'}
+
+    def validate(self, attrs):
+        extra_keys = set(self.initial_data.keys()) - self._allowed_fields
+        if extra_keys:
+            raise serializers.ValidationError(
+                f'不支持的参数: {", ".join(sorted(extra_keys))}'
+            )
+        return attrs
+
 
 class VersionCheckResponseSerializer(serializers.Serializer):
     """

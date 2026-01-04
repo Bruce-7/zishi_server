@@ -39,11 +39,13 @@ class AppVersionViewSet(BaseModelViewSet):
         """根据操作类型选择序列化器"""
         if self.action == 'list':
             return AppVersionListSerializer
+        if self.action == 'check':
+            return VersionCheckRequestSerializer
         return AppVersionSerializer
 
     def get_permissions(self):
         """根据操作类型设置权限"""
-        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+        if self.action in ['list', 'retrieve', 'create', 'update', 'partial_update', 'destroy']:
             return [IsAdminUser()]
         return [AllowAny()]
 

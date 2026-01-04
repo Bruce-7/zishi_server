@@ -19,8 +19,6 @@ class UserAdmin(BaseUserAdmin):
         'name',
         'mobile',
         'gender_display',
-        'tickets_display',
-        'coins_display',
         'account_status',
         'is_staff',
         'date_joined',
@@ -58,10 +56,6 @@ class UserAdmin(BaseUserAdmin):
         ('个人信息', {
             'fields': ('name', 'gender', 'mobile', 'email', 'avatar_url', 'avatar_large_preview')
         }),
-        ('虚拟资产', {
-            'fields': ('tickets', 'coins'),
-            'description': '用户的门票和金币数量，请谨慎修改'
-        }),
         ('权限', {
             'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
         }),
@@ -80,20 +74,6 @@ class UserAdmin(BaseUserAdmin):
     ordering = ('-id',)
 
     list_per_page = 20
-
-    def tickets_display(self, obj):
-        """门票显示（带颜色）"""
-        color = 'green' if obj.tickets > 0 else 'gray'
-        return mark_safe(f'<span style="color: {color};">{obj.tickets} 张</span>')
-
-    tickets_display.short_description = '门票'
-
-    def coins_display(self, obj):
-        """金币显示（带颜色）"""
-        color = 'orange' if obj.coins > 0 else 'gray'
-        return mark_safe(f'<span style="color: {color};">{obj.coins} 枚</span>')
-
-    coins_display.short_description = '金币'
 
     def avatar_preview(self, obj):
         """头像预览（小图）"""
