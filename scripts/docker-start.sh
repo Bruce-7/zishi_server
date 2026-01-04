@@ -55,23 +55,17 @@ if [[ "${ENV_NAME}" != "local" ]]; then
     echo "⚠️  警告：未检测到 ${ENV_NAME} 环境的 SSL 证书文件"
     echo "证书路径: ${SSL_CERT_DIR}/"
     echo ""
-    echo "请按以下步骤部署证书："
-    if [[ "${ENV_NAME}" == "development" ]]; then
-      echo "  1. 从腾讯云下载 43.140.248.182 的 SSL 证书（Nginx 格式）"
-      echo "  2. 将证书文件上传到: ${SSL_CERT_DIR}/fullchain.pem"
-      echo "  3. 将私钥文件上传到: ${SSL_CERT_DIR}/privkey.pem"
-    else
+    if [[ "${ENV_NAME}" == "production" ]]; then
+      echo "请按以下步骤部署证书："
       echo "  1. 从腾讯云下载 api.dry-zishi.com 的 SSL 证书（Nginx 格式）"
       echo "  2. 将证书文件上传到: ${SSL_CERT_DIR}/fullchain.pem"
       echo "  3. 将私钥文件上传到: ${SSL_CERT_DIR}/privkey.pem"
-    fi
-    echo ""
-    echo "详细说明请参考: configurations/ssl/README.md"
-    echo ""
-    read -r -p "是否继续启动服务？(y/n): " continue_start
-    if [[ "${continue_start}" != "y" ]]; then
-      echo "❌ 已取消启动"
-      exit 0
+      echo ""
+      read -r -p "是否继续启动服务？(y/n): " continue_start
+      if [[ "${continue_start}" != "y" ]]; then
+        echo "❌ 已取消启动"
+        exit 0
+      fi
     fi
   else
     echo "✅ 已检测到 ${ENV_NAME} 环境的 SSL 证书"
@@ -99,10 +93,9 @@ if echo "${service_status}" | grep -q "Up"; then
     echo "API 文档: http://localhost:8000/docs/"
     echo "管理后台: http://localhost:8000/zishi_admin/"
   elif [[ "${ENV_NAME}" == "development" ]]; then
-    echo "HTTP 访问: http://43.140.248.182 （自动重定向到 HTTPS）"
-    echo "HTTPS 访问: https://43.140.248.182"
-    echo "API 文档: https://43.140.248.182/docs/"
-    echo "管理后台: https://43.140.248.182/zishi_admin/"
+    echo "HTTP 访问: http://43.140.248.182"
+    echo "API 文档: http://43.140.248.182/docs/"
+    echo "管理后台: http://43.140.248.182/zishi_admin/"
   else
     echo "HTTP 访问: http://api.dry-zishi.com （自动重定向到 HTTPS）"
     echo "HTTPS 访问: https://api.dry-zishi.com"

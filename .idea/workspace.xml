@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="78f3bc9e-1e15-48a9-a0ac-51cd67925b5e" name="更改" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/configurations/nginx.development.conf" beforeDir="false" afterPath="$PROJECT_DIR$/configurations/nginx.development.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/configurations/nginx.production.conf" beforeDir="false" afterPath="$PROJECT_DIR$/configurations/nginx.production.conf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/docker-start.sh" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/docker-start.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
