@@ -8,6 +8,8 @@ services:
     restart: unless-stopped
     networks:
       - zishi_network
+    ports:
+      - "3306:3306"
     command: >
       --default-authentication-plugin=caching_sha2_password
       --character-set-server=utf8mb4
