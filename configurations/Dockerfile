@@ -1,43 +1,28 @@
-# 使用 Python 3.10 官方镜像
-FROM python:3.10.13-slim
+# Django Web 服务基础镜像构建
+# 只负责安装依赖与准备运行环境，所有敏感配置通过 configurations/.env 提供
 
-# 设置工作目录
+FROM python:3.10-slim AS base
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=off \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PIP_DEFAULT_TIMEOUT=100
+
 WORKDIR /app
 
-# 设置环境变量
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1
-
-# 安装系统依赖
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    curl \
-    default-libmysqlclient-dev \
-    gcc \
-    python3-dev \
+# 安装系统依赖（如需可在此添加构建依赖）
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends build-essential default-libmysqlclient-dev wget curl \
     && rm -rf /var/lib/apt/lists/*
 
-# 复制依赖文件
-COPY configurations/requirements.txt /app/configurations/
-
 # 安装 Python 依赖
-RUN python -m pip install --upgrade pip && \
-    python -m pip install -r configurations/requirements.txt && \
-    python -m pip install gunicorn
+COPY configurations/requirements.txt /tmp/requirements.txt
+RUN python -m pip install --upgrade pip \
+    && python -m pip install -r /tmp/requirements.txt \
+    && rm -f /tmp/requirements.txt
 
-# 复制项目文件
-COPY . /app/
+# 拷贝项目代码
+COPY . /app
 
-# 创建必要的目录
-RUN mkdir -p /app/logs /app/static /app/media /app/data
-
-# 收集静态文件
-RUN python manage.py collectstatic --noinput || true
-
-# 暴露端口
-EXPOSE 8000
-
-# 启动命令
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "4", "--timeout", "120", "--access-logfile", "-", "--error-logfile", "-", "django_server.wsgi:application"]
+# 默认命令交由 docker-compose 指定

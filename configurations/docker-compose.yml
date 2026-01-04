@@ -1,65 +1,66 @@
+# Docker 编排文件（统一放置在 configurations 目录）
+# 依赖 configurations/.env 提供运行时环境变量
+
+version: "3.9"
+
 services:
   mysql:
     image: mysql:8.0
     container_name: zishi_mysql
+    restart: unless-stopped
+    networks:
+      - zishi_network
+    command: >
+      --default-authentication-plugin=caching_sha2_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+    env_file:
+      - ./.env
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?请先在 configurations/.env 中设置 MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_CHARACTER_SET_SERVER: utf8mb4
-      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
-      MYSQL_DEFAULT_AUTHENTICATION_PLUGIN: mysql_native_password
-    ports:
-      - "3306:3306"
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
-    command: 
-      - "--character-set-server=utf8mb4"
-      - "--collation-server=utf8mb4_unicode_ci"
-      - "--default-authentication-plugin=mysql_native_password"
-      - "--max_connections=1000"
-    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   web:
     build:
       context: ..
-      dockerfile: configurations/Dockerfile
+      dockerfile: Dockerfile
     container_name: zishi_web
-    ports:
-      - "8000:8000"
-    volumes:
-      - ../media:/app/media
-      - ../logs:/app/logs
-      - ./.env:/app/configurations/.env
-    environment:
-      - DJANGO_SETTINGS_MODULE=django_server.settings
-      - PYTHONUNBUFFERED=1
-      - DB_ENGINE=django.db.backends.mysql
-      - DB_NAME=${DB_NAME}
-      - DB_USER=root
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_HOST=mysql
-      - DB_PORT=3306
-      - DB_CONN_MAX_AGE=600
+    restart: unless-stopped
     depends_on:
       mysql:
         condition: service_healthy
-    restart: unless-stopped
+    networks:
+      - zishi_network
+    env_file:
+      - ./.env
     command: >
-      sh -c "python manage.py wait_for_db &&
-             python manage.py migrate &&
-             python manage.py collectstatic --noinput &&
-             gunicorn --bind 0.0.0.0:8000 
-                     --workers 4 
-                     --timeout 120 
-                     --worker-class=gthread 
-                     --threads 4 
-                     --worker-connections=1000 
-                     --max-requests=1000 
-                     --max-requests-jitter=50 
-                     --access-logfile - 
-                     --error-logfile - 
-                     django_server.wsgi:application"
+      sh -c "
+      python manage.py migrate &&
+      python manage.py collectstatic --noinput &&
+      gunicorn django_server.wsgi:application --bind 0.0.0.0:8000
+      "
+    ports:
+      - "8000:8000"
+    volumes:
+      - ..:/app
+      - static_volume:/app/static
+      - media_volume:/app/media
 
 volumes:
   mysql_data:
+  static_volume:
+  media_volume:
+
+networks:
+  zishi_network:
+    driver: bridge

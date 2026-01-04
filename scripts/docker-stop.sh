@@ -1,37 +1,21 @@
-#!/bin/bash
-# Docker 停止脚本
+#!/usr/bin/env bash
 
-set -e
+# Docker 停止脚本：安全停止并移除容器
 
-# 获取项目根目录
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-DOCKER_CONFIG_DIR="$PROJECT_ROOT/configurations"
+set -euo pipefail
 
-echo "========================================="
-echo "停止 ZiShi Docker 容器"
-echo "========================================="
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+CONFIG_DIR="${ROOT_DIR}/configurations"
+COMPOSE_FILE="${CONFIG_DIR}/docker-compose.yml"
 
-# 检查 Docker Compose 是否安装并确定使用哪个命令
-if command -v docker-compose &> /dev/null; then
-    DOCKER_COMPOSE="docker-compose"
-elif docker compose version &> /dev/null 2>&1; then
-    DOCKER_COMPOSE="docker compose"
-else
-    echo "错误: Docker Compose 未安装"
-    exit 1
+if [[ ! -f "${COMPOSE_FILE}" ]]; then
+  echo "❌ 未找到 configurations/docker-compose.yml，请确认项目结构。" >&2
+  exit 1
 fi
 
-echo "使用 Docker Compose 命令: $DOCKER_COMPOSE"
-echo ""
+export COMPOSE_PROJECT_NAME="zishi_server"
 
-# 进入配置目录
-cd "$DOCKER_CONFIG_DIR"
+echo "🛑 正在停止 Docker 服务..."
+docker compose -f "${COMPOSE_FILE}" down "$@"
 
-# 停止并删除容器
-echo "停止容器..."
-$DOCKER_COMPOSE down
-
-echo "========================================="
-echo "✅ 容器已停止"
-echo "========================================="
+echo "✅ Docker 服务已停止。"

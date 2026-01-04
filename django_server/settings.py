@@ -26,8 +26,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # 初始化 environ
 env = environ.Env()
 
-# 读取 .env 文件（从 configurations 目录）
-environ.Env.read_env(BASE_DIR / 'configurations' / '.env')
+# 读取 configurations/.env，未找到则跳过，保留系统环境变量兼容性
+ENV_DIR = BASE_DIR / 'configurations'
+ENV_PATH = ENV_DIR / '.env'
+if ENV_PATH.exists():
+    environ.Env.read_env(ENV_PATH)
 
 # 将 apps 目录添加到 Python 路径
 sys.path.insert(0, str(BASE_DIR / 'apps'))
@@ -104,7 +107,7 @@ WSGI_APPLICATION = 'django_server.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',  # 直接使用字符串，而不是从环境变量读取
+        'ENGINE': env('DB_ENGINE', default='django.db.backends.mysql'),
         'NAME': env('DB_NAME'),
         'USER': env('DB_USER'),
         'PASSWORD': env('DB_PASSWORD'),
