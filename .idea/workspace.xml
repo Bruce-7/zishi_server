@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="78f3bc9e-1e15-48a9-a0ac-51cd67925b5e" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/configurations/Dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/configurations/docker-compose.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/configurations/mysql/init.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/django_server/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/django_server/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/deploy-check.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/docker-db.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/docker-start.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/docker-stop.sh" beforeDir="false" />
-    </list>
+    <list default="true" id="78f3bc9e-1e15-48a9-a0ac-51cd67925b5e" name="更改" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
