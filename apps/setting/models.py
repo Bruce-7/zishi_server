@@ -110,3 +110,143 @@ class AppVersion(BaseModel):
             raise ValidationError('强制更新时必须提供下载地址')
 
         super().save(*args, **kwargs)
+
+
+class DynamicConfig(BaseModel):
+    """
+    动态配置模型
+    用于管理应用中的各类动态内容配置，如 banner、活动、设置等
+    支持通过 type 字段区分不同类型的配置
+    """
+    TYPE_CHOICES = [
+        ('banner', 'Banner广告'),
+        ('activity', '活动配置'),
+        ('setting', '系统设置'),
+    ]
+
+    type = models.CharField(
+        max_length=50,
+        choices=TYPE_CHOICES,
+        db_index=True,
+        verbose_name='配置类型',
+        help_text='配置类型：banner、activity、setting'
+    )
+
+    title = models.CharField(
+        max_length=200,
+        verbose_name='标题',
+        help_text='配置项的标题'
+    )
+
+    banner_image_url = models.URLField(
+        max_length=500,
+        verbose_name='Banner图片URL',
+        help_text='Banner图片地址，用于 banner 和 activity 类型',
+        blank=True,
+        null=True
+    )
+
+    target_url = models.URLField(
+        max_length=500,
+        verbose_name='目标URL',
+        help_text='点击后跳转的网页地址',
+        blank=True,
+        null=True
+    )
+
+    description = models.TextField(
+        verbose_name='描述',
+        help_text='配置项的详细描述',
+        blank=True,
+        null=True
+    )
+
+    sort_order = models.IntegerField(
+        default=0,
+        verbose_name='排序',
+        help_text='数字越小越靠前，默认为0',
+        db_index=True
+    )
+
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name='是否启用',
+        help_text='只有启用的配置才会被接口返回'
+    )
+
+    start_time = models.DateTimeField(
+        verbose_name='生效开始时间',
+        help_text='配置生效的开始时间',
+        blank=True,
+        null=True
+    )
+
+    end_time = models.DateTimeField(
+        verbose_name='生效结束时间',
+        help_text='配置生效的结束时间',
+        blank=True,
+        null=True
+    )
+
+    extra_data = models.JSONField(
+        verbose_name='扩展数据',
+        help_text='额外的配置数据，JSON格式',
+        blank=True,
+        null=True,
+        default=dict
+    )
+
+    class Meta:
+        db_table = 'setting_dynamic_config'
+        verbose_name = '动态配置'
+        verbose_name_plural = '动态配置管理'
+        ordering = ['type', 'sort_order', '-create_time']
+        indexes = [
+            models.Index(fields=['type', 'is_active']),
+            models.Index(fields=['type', 'sort_order']),
+            models.Index(fields=['start_time', 'end_time']),
+        ]
+
+    def __str__(self):
+        return f"[{self.get_type_display()}] {self.title}"
+
+    def is_valid_time(self):
+        """
+        检查当前时间是否在配置的有效期内
+        
+        Returns:
+            bool: 如果在有效期内返回 True，否则返回 False
+        """
+        from django.utils import timezone
+        now = timezone.now()
+
+        # 如果没有设置时间限制，则始终有效
+        if not self.start_time and not self.end_time:
+            return True
+
+        # 只设置了开始时间
+        if self.start_time and not self.end_time:
+            return now >= self.start_time
+
+        # 只设置了结束时间
+        if not self.start_time and self.end_time:
+            return now <= self.end_time
+
+        # 同时设置了开始和结束时间
+        return self.start_time <= now <= self.end_time
+
+    def save(self, *args, **kwargs):
+        """
+        保存前的验证逻辑
+        """
+        # 验证时间范围
+        if self.start_time and self.end_time:
+            if self.start_time >= self.end_time:
+                from django.core.exceptions import ValidationError
+                raise ValidationError('生效开始时间必须早于结束时间')
+
+        # 确保 extra_data 不为 None
+        if self.extra_data is None:
+            self.extra_data = {}
+
+        super().save(*args, **kwargs)

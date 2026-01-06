@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import AppVersion
+from .models import AppVersion, DynamicConfig
 
 
 class AppVersionListSerializer(serializers.ModelSerializer):
@@ -115,3 +115,118 @@ class VersionCheckResponseSerializer(serializers.Serializer):
         required=False,
         help_text='提示信息'
     )
+
+
+class DynamicConfigListSerializer(serializers.ModelSerializer):
+    """动态配置列表序列化器"""
+
+    type_display = serializers.CharField(
+        source='get_type_display',
+        read_only=True,
+        help_text='配置类型显示名称'
+    )
+
+    is_valid = serializers.SerializerMethodField(
+        help_text='是否在有效期内'
+    )
+
+    class Meta:
+        model = DynamicConfig
+        fields = [
+            'id',
+            'type',
+            'type_display',
+            'title',
+            'banner_image_url',
+            'target_url',
+            'sort_order',
+            'is_active',
+            'is_valid',
+            'create_time',
+        ]
+        read_only_fields = ['id', 'create_time']
+
+    def get_is_valid(self, obj):
+        """获取配置是否在有效期内"""
+        return obj.is_valid_time()
+
+
+class DynamicConfigSerializer(serializers.ModelSerializer):
+    """动态配置详情序列化器"""
+
+    type_display = serializers.CharField(
+        source='get_type_display',
+        read_only=True,
+        help_text='配置类型显示名称'
+    )
+
+    is_valid = serializers.SerializerMethodField(
+        help_text='是否在有效期内'
+    )
+
+    class Meta:
+        model = DynamicConfig
+        fields = [
+            'id',
+            'type',
+            'type_display',
+            'title',
+            'banner_image_url',
+            'target_url',
+            'description',
+            'sort_order',
+            'is_active',
+            'start_time',
+            'end_time',
+            'is_valid',
+            'extra_data',
+            'create_time',
+            'update_time'
+        ]
+        read_only_fields = ['id', 'create_time', 'update_time']
+
+    def get_is_valid(self, obj):
+        """获取配置是否在有效期内"""
+        return obj.is_valid_time()
+
+
+class DynamicConfigRequestSerializer(serializers.Serializer):
+    """
+    动态配置请求序列化器
+    用于验证客户端提交的配置查询参数
+    """
+    type = serializers.ChoiceField(
+        choices=['banner', 'activity', 'setting'],
+        required=True,
+        help_text='配置类型：banner、activity、setting'
+    )
+
+    _allowed_fields = {'type'}
+
+    def validate(self, attrs):
+        """验证请求参数"""
+        extra_keys = set(self.initial_data.keys()) - self._allowed_fields
+        if extra_keys:
+            raise serializers.ValidationError(
+                f'不支持的参数: {", ".join(sorted(extra_keys))}'
+            )
+        return attrs
+
+
+class DynamicConfigClientSerializer(serializers.ModelSerializer):
+    """
+    动态配置客户端序列化器
+    用于返回给客户端的精简数据
+    """
+
+    class Meta:
+        model = DynamicConfig
+        fields = [
+            'id',
+            'title',
+            'banner_image_url',
+            'target_url',
+            'description',
+            'sort_order',
+            'extra_data',
+        ]

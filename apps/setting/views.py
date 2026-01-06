@@ -6,11 +6,15 @@ from rest_framework.permissions import IsAdminUser, AllowAny
 
 from utils.base_views import BaseModelViewSet
 from utils.response import ResponseUtil
-from .models import AppVersion
+from .models import AppVersion, DynamicConfig
 from .serializers import (
     AppVersionSerializer,
     AppVersionListSerializer,
-    VersionCheckRequestSerializer
+    VersionCheckRequestSerializer,
+    DynamicConfigSerializer,
+    DynamicConfigListSerializer,
+    DynamicConfigRequestSerializer,
+    DynamicConfigClientSerializer
 )
 
 
@@ -183,6 +187,108 @@ class AppVersionViewSet(BaseModelViewSet):
             return ResponseUtil(
                 message='获取成功',
                 data=serializer.data,
+                http_status=status.HTTP_200_OK
+            )
+
+        except Exception as e:
+            return ResponseUtil(
+                code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                message=f'服务器错误：{str(e)}',
+                data=None,
+                http_status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class DynamicConfigViewSet(BaseModelViewSet):
+    """动态配置视图集
+    
+    提供动态配置的增删查改功能
+    - list: 获取配置列表（分页，需要管理员权限）
+    - retrieve: 获取配置详情（需要管理员权限）
+    - create: 创建配置（需要管理员权限）
+    - update: 更新配置（需要管理员权限）
+    - destroy: 删除配置（需要管理员权限）
+    - get_by_type: 根据类型获取配置（游客可访问）
+    """
+    resource_name = '动态配置'
+    queryset = DynamicConfig.objects.filter(is_delete=False)
+    serializer_class = DynamicConfigSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['type', 'is_active']
+    search_fields = ['title', 'description']
+    ordering_fields = ['sort_order', 'create_time']
+    ordering = ['type', 'sort_order', '-create_time']
+
+    def get_serializer_class(self):
+        """根据操作类型选择序列化器"""
+        if self.action == 'list':
+            return DynamicConfigListSerializer
+        if self.action == 'get_by_type':
+            return DynamicConfigClientSerializer
+        return DynamicConfigSerializer
+
+    def get_permissions(self):
+        """根据操作类型设置权限"""
+        if self.action in ['list', 'retrieve', 'create', 'update', 'partial_update', 'destroy']:
+            return [IsAdminUser()]
+        return [AllowAny()]
+
+    @action(detail=False, methods=['get'], permission_classes=[AllowAny])
+    def get_by_type(self, request):
+        """根据类型获取配置
+        
+        GET /setting/configs/get_by_type/?type=banner
+        
+        请求参数：
+        - type: 配置类型（banner、activity、setting）
+        
+        返回：
+        - 返回指定类型的所有有效配置（已启用且在有效期内）
+        - 按 sort_order 升序排列
+        """
+        config_type = request.query_params.get('type')
+
+        if not config_type:
+            return ResponseUtil(
+                code=status.HTTP_400_BAD_REQUEST,
+                message='缺少 type 参数',
+                data=None,
+                http_status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # 验证 type 参数
+        serializer = DynamicConfigRequestSerializer(data={'type': config_type})
+        if not serializer.is_valid():
+            return ResponseUtil(
+                code=status.HTTP_400_BAD_REQUEST,
+                message='参数错误：' + str(serializer.errors),
+                data=None,
+                http_status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            from django.utils import timezone
+            now = timezone.now()
+
+            # 查询指定类型的有效配置
+            configs = DynamicConfig.objects.filter(
+                type=config_type,
+                is_active=True,
+                is_delete=False
+            ).filter(
+                # 时间范围过滤：未设置时间或在有效期内
+                Q(start_time__isnull=True, end_time__isnull=True) |
+                Q(start_time__isnull=True, end_time__gte=now) |
+                Q(start_time__lte=now, end_time__isnull=True) |
+                Q(start_time__lte=now, end_time__gte=now)
+            ).order_by('sort_order', '-create_time')
+
+            # 序列化数据
+            result_serializer = DynamicConfigClientSerializer(configs, many=True)
+
+            return ResponseUtil(
+                message='获取成功',
+                data=result_serializer.data,
                 http_status=status.HTTP_200_OK
             )
 
